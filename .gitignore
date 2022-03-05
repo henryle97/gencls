@@ -1,0 +1,5 @@
+weights/
+!weights/__init__.py
+DATA/
+experiments/
+*.pyc

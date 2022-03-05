@@ -1,0 +1,92 @@
+
+Common:
+  use_gpu: true
+  pretrained_model:                 # for train and infer
+  resume_from:                      # only for train
+  exp_dir: 'experiments/test'
+Model:
+  type: mobilenetv3
+  hyperparameter:
+    in_channels: 3
+    # arch: small
+    # scale: 0.35
+    arch: large
+    scale: 1
+  num_classes: 2
+
+Optimizer:
+  name: Adam
+  beta: [0.9, 0.999]
+  lr: 0.001
+
+Scheduler:
+  name: OneCycleLR
+  max_lr: 0.001
+  pct_start: 0.3
+
+Dataset:
+  # type: LMDBDataset
+  # train_path:
+  # test_path:
+  type: SimpleDataset
+  image_root: './'
+  train_label_path:
+  test_label_path:
+  
+  Train:
+    batch_size: 128
+    transforms:
+      - Resize:
+          size: [48, 96]
+          keep_ratio: true
+      - ImgAugTransform:
+      - Normalize: 
+          scale: 1.0/255.0
+          mean: [0.485, 0.456, 0.406]
+          std: [0.229, 0.224, 0.225]   # rgb
+    shuffle: true
+  Eval:
+    batch_size: 128
+    transforms:
+      - Resize:
+          size: [48, 96]
+          keep_ratio: true
+      - Normalize: 
+          scale: 1.0/255.0
+          mean: [0.485, 0.456, 0.406]
+          std: [0.229, 0.224, 0.225]   # rgb
+    shuffle: false
+
+DataLoader:
+  num_workers: 2
+  pin_memory: true
+
+Infer:
+  img: ./                 # dir or image path
+  batch_size: 32
+  transforms:
+    - DecodeImage:
+        to_rgb: true
+    - Resize:
+        size: [48, 96]
+        keep_ratio: true
+        
+    - Normalize: 
+        scale: 1.0/255.0
+        # mean: [0.485, 0.456, 0.406]
+        # std: [0.229, 0.224, 0.225]   # rgb
+        mean: [0, 0, 0]
+        std: [1, 1, 1]   # rgb
+
+
+  shuffle: false
+  PostProcess:
+    name: Topk
+    topk: 1
+    class_id_mapping:
+      print: 0
+      handwriting: 1
+
+
+
+
