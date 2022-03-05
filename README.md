@@ -1,5 +1,5 @@
 <div align='center'>
-    <b><font size='10'> GenCLS</font></b>
+    <b><font size='30'> GenCLS</font></b>
 </div>
 
 ## Introduction 
@@ -25,8 +25,8 @@ GenCLS is an open source image classification toolbox based on PyTorch.
 - [ ] Training module 
 - [ ] Optimize config 
 - [ ] Add trainin tricks
-    - [] AMP 
-    - [] EMA 
+    - [ ] AMP 
+    - [ ] EMA 
 - [ ] Benchmark 
 - [ ] Model compression 
 - [ ] Model export 
