@@ -22,4 +22,11 @@ class Cfg(dict):
     # @property
     def pretty_text(self):
         pprint.PrettyPrinter().pprint(self)
-
+    
+    @staticmethod
+    def update_from_args(config, args):
+        if args.resume_from is not None:
+            config['Common']['resume_from'] = args.resume_from
+        if args.pretrained is not None:
+            config['Common']['pretrained_model'] = args.pretrained
+        return config

@@ -27,12 +27,13 @@ class SimpleDataset(BaseDataset):
         self.image_paths = []
         self.labels = []
         self._load_annos()
+        self.nSamples = len(self.image_paths)
 
     def _load_annos(self):
         '''
         line format: img_path\tlabel
         '''
-        if self.image_paths is not None:
+        if self.pseudo_image_paths is not None:
             self.image_paths = self.pseudo_image_paths
             self.labels = [0] * len(self.image_paths)
 
@@ -50,13 +51,18 @@ class SimpleDataset(BaseDataset):
 
 
     def _get_data(self, idx):
+        print("IDX ", idx)
         if self.image_root:
             img_path = osp.join(self.image_root, self.image_paths[idx])
         else:
             img_path = self.image_paths[idx]
+
         img = cv2.imread(img_path)
+        # if img is None: 
+        #     print("Get image None")
+        #     raise Exception
         if self.transform_ops:
-                img = transform(img, self.transform_ops)
+            img = transform(img, self.transform_ops)
 
         label = self.labels[idx]
         return img, label, img_path

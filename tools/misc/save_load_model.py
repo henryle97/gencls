@@ -1,4 +1,8 @@
 import torch 
+from tools.misc.logger import get_root_logger
+
+
+logger = get_root_logger()
 
 def save_checkpoint(checkpoint_path, 
                     model, 
@@ -35,12 +39,12 @@ def save_weight(model, weight_path):
 def load_weight(weight_path, model):
     checkpoint = torch.load(weight_path)
     for name, param in model.named_parameters():
-            if name not in checkpoint:
-                print('{} not found'.format(name))
-            elif checkpoint[name].shape != param.shape:
-                print('{} missmatching shape, required {} but found {}'.format(
-                    name, param.shape, checkpoint[name].shape))
-                del checkpoint[name]
+        if name not in checkpoint:
+            logger.info('{} not found'.format(name))
+        elif checkpoint[name].shape != param.shape:
+            logger.info('{} missmatching shape, required {} but found {}'.format(
+                name, param.shape, checkpoint[name].shape))
+            del checkpoint[name]
     model.load_state_dict(checkpoint, strict=False)
     return model
 

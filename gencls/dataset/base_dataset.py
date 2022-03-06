@@ -9,6 +9,7 @@ from torch.utils.data import Dataset
 from gencls.dataset.preprocess.create_operators import create_operators
 from gencls.dataset.preprocess.transform import transform
 import random 
+from tools.misc.logger import get_root_logger
 
 class BaseDataset(Dataset):
     def __init__(self, 
@@ -31,22 +32,25 @@ class BaseDataset(Dataset):
         pass
 
     def __len__(self):
-        return len(self.image_paths)
+        return len(self.nSamples)
 
     def __getitem__(self, idx):
-        try:
-            img, label, img_path = self._get_data(idx)
-            
-            
-            img = img.transpose((2, 0, 1)) # HxWxC --> CxHxW
-
-        except Exception as err:
-            print(err)
-            rnd_idx = random.randint(0, self.__len__() - 1)
-            self.__getitem__(rnd_idx)
+        print(idx)
+        sample = None
+        # try:
+        img, label, img_path = self._get_data(idx)
+        # print(label)
+        img = img.transpose((2, 0, 1)) # HxWxC --> CxHxW
         sample = {
             'img': torch.FloatTensor(img),
             'label': float(label),
             'img_path': img_path
-        }
+            }
+        # except Exception as err:
+        #     print("Exception at __getitem__", err)
+        #     rnd_idx = random.randint(0, self.__len__() - 1)
+        #     self.__getitem__(rnd_idx)
+
+        # print(sample['img'].size())
+        # print(sample['label'])
         return sample
