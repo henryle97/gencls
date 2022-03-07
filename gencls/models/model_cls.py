@@ -24,7 +24,7 @@ class ClsModel(nn.Module):
         # )
 
     def forward(self, x):
-        features = self.feat(x)
+        features = self.feature_extractor(x)
         outs = self.head(features)
         return outs
 
