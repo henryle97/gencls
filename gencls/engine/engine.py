@@ -44,7 +44,7 @@ class Engine:
         # build dataloader
         if mode == 'train':
             self.train_dataloader = build_dataloader(config, mode='train')
-            from IPython import embed; embed()
+            # from IPython import embed; embed()
             self.logger.info(f"Num of batch of train loader: {len(self.train_dataloader)}")
             
         if mode == 'eval' or (mode == 'train' and config['Common']['eval_during_training']):

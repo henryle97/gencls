@@ -57,5 +57,7 @@ class LmdbDataset(BaseDataset):
         buf, label, img_path = self.read_buffer(idx)
         img = Image.open(buf).convert('RGB')  
         img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR) 
+        if self.transform_ops:
+            img = transform(img, self.transform_ops)
 
         return img, label, img_path
