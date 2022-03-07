@@ -13,7 +13,7 @@ from gencls.dataset.postprocess import build_postprocess
 from tools.misc.logger import get_root_logger
 from tools.misc.save_load_model import save_checkpoint, load_checkpoint, save_weight, load_weight, move_optimize_to_device
 from tools.misc.average_meter import AverageMeter
-
+from tools.misc.config import Cfg
 class Engine:
     def __init__(self, config, mode='train'):
         """ Engine class
@@ -84,7 +84,9 @@ class Engine:
             self.logger.info(f"Load pretrained weight from: {pretrained_path}")
         
         self.model = self.model.to(self.device)
-
+        
+        # save config
+        config.save(osp.join(self.exp_dir, "config.yml"))
         
 
     def train(self):
