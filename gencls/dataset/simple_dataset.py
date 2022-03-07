@@ -51,7 +51,7 @@ class SimpleDataset(BaseDataset):
 
 
     def _get_data(self, idx):
-        print("IDX ", idx)
+        # print("IDX ", idx)
         if self.image_root:
             img_path = osp.join(self.image_root, self.image_paths[idx])
         else:

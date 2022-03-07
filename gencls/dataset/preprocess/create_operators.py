@@ -22,4 +22,5 @@ def create_operators(params):
         param = {} if operator[op_name] is None else operator[op_name]
         op = getattr(preprocess, op_name)(**param)
         ops.append(op)
+        print(ops)
     return ops

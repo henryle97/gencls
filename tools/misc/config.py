@@ -25,8 +25,11 @@ class Cfg(dict):
     
     @staticmethod
     def update_from_args(config, args):
-        if args.resume_from is not None:
+        args_dict = vars(args)
+        if args_dict.get('resume_from') is not None:
             config['Common']['resume_from'] = args.resume_from
-        if args.pretrained is not None:
+        if args_dict.get('pretrained') is not None:
             config['Common']['pretrained_model'] = args.pretrained
+        if args_dict.get('metric') is not None:
+            config['Metric'] = args.metric.split(",")
         return config

@@ -45,8 +45,12 @@ def build_dataloader(config, mode='train'):
                             config['DataLoader']['pin_memory']
 
     key_dict = mode.title() if mode != 'pseudo' else 'Infer'
-    batch_size, shuffle = config['Dataset'][key_dict]['batch_size'],  \
-                        config['Dataset'][key_dict]['shuffle'] 
+    if mode == 'pseudo' or mode == 'infer':
+        batch_size, shuffle = config[key_dict]['batch_size'],  \
+                            config[key_dict]['shuffle'] 
+    else:
+        batch_size, shuffle = config['Dataset'][key_dict]['batch_size'],  \
+                            config['Dataset'][key_dict]['shuffle'] 
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=batch_size,

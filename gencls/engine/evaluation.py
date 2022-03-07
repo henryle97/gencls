@@ -1,6 +1,7 @@
 from multiprocessing import get_logger
 import time
-import torch 
+import torch
+import tqdm 
 
 
 def evaluate(engine, epoch_id):
@@ -26,6 +27,25 @@ def evaluate(engine, epoch_id):
     #     engine.time_info[key].reset()
 
     return engine.metric_info.avg
+
+def test(engine):
+    tic = time.time()
+    outputs_all = None 
+    targets_all = None
+    with torch.no_grad():
+        for idx, batch_data in tqdm.tqdm(enumerate(engine.val_dataloader)):
+            
+            batch_data = engine.transfer_batch_to_device(batch_data)
+            targets = batch_data['label'].long()
+            outputs = engine.model(batch_data['img'])
+
+            outputs_all = torch.cat((outputs_all, outputs)) if outputs_all is not None else outputs
+
+            targets_all = torch.cat((targets_all, targets)) if targets_all is not None else targets
+            
+    assert outputs_all.size(0) == targets_all.size(0)
+    metric_result = engine.eval_metric_func(outputs_all, targets_all)
+    return metric_result
 
 
         

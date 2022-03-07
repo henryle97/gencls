@@ -32,10 +32,10 @@ class BaseDataset(Dataset):
         pass
 
     def __len__(self):
-        return len(self.nSamples)
+        return self.nSamples
 
     def __getitem__(self, idx):
-        print(idx)
+        # print(idx)
         sample = None
         # try:
         img, label, img_path = self._get_data(idx)

@@ -22,7 +22,8 @@ GenCLS is an open source image classification toolbox based on PyTorch.
 - [ ] ResNet
 
 ## TODO 
-- [ ] Training module 
+- [x] Training module 
+    - [ ] Cache dataset for faster training
 - [ ] Optimize config 
 - [ ] Add trainin tricks
     - [ ] AMP 

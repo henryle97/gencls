@@ -5,7 +5,7 @@ import tqdm
 import time
 
 from gencls.dataset.builder import build_dataloader
-from gencls.engine.evaluation import evaluate
+from gencls.engine.evaluation import evaluate, test
 from gencls.engine.train import train_one_epoch
 from gencls.evaluation import build_metric
 from gencls.models.builder import build_loss, build_model, build_optimizer, build_scheduler
@@ -61,7 +61,7 @@ class Engine:
         self.model = build_model(config)
 
         # build opt + scheduler + loss
-        if mode in ['train', 'eval']:
+        if mode in ['train']:
             self.optimizer = build_optimizer(config, self.model)
             self.scheduler = build_scheduler(config, self.optimizer, step_per_epoch=len(self.train_dataloader))
             self.criterion = build_loss(config)
@@ -125,6 +125,11 @@ class Engine:
         eval_result = evaluate(self, epoch_id)
         self.model.train()
         return eval_result
+
+    def test(self):
+        self.model.eval()
+        metric_result = test(self)
+        return metric_result
 
 
     def infer_on_dataloader(self):
