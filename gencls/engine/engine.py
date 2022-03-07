@@ -86,6 +86,7 @@ class Engine:
         self.model = self.model.to(self.device)
         
         # save config
+        self.logger.info(config.pretty_text())
         config.save(osp.join(self.exp_dir, "config.yml"))
         
 
