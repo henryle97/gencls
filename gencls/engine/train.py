@@ -7,7 +7,7 @@ import torch
 def train_one_epoch(engine, epoch_id, print_batch_step):
     tic = time.time()
     for iter_id, batch_data in enumerate(engine.train_dataloader):
-        print('{}MB allocated'.format(torch.cuda.memory_allocated()/1024**2))
+        # print('{}MB allocated'.format(torch.cuda.memory_allocated()/1024**2))
         batch_data = engine.transfer_batch_to_device(batch_data)
         data_time = time.time() - tic
         targets = batch_data['label'].long()
