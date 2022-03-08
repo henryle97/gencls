@@ -24,25 +24,28 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
         logging.Logger: The expected logger.
     """
     
-   
-    logger = logging.getLogger()
+    global loggers
+    logger = logging.getLogger(name)
+    if loggers.get(name):
+        return loggers.get(name)
+    else:
 
-    stream_handler = logging.StreamHandler()
-    handlers = [stream_handler]
+        stream_handler = logging.StreamHandler()
+        handlers = [stream_handler]
 
-    if log_file is not None:
-        file_handler = logging.FileHandler(log_file, file_mode)
-        handlers.append(file_handler)
+        if log_file is not None:
+            file_handler = logging.FileHandler(log_file, file_mode)
+            handlers.append(file_handler)
 
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    for handler in handlers:
-        handler.setFormatter(formatter)
-        handler.setLevel(log_level)
-        logger.addHandler(handler)
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        for handler in handlers:
+            handler.setFormatter(formatter)
+            handler.setLevel(log_level)
+            logger.addHandler(handler)
 
 
-    logger.setLevel(log_level)
+        logger.setLevel(log_level)
 
     return logger
 
