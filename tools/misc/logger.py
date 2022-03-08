@@ -24,10 +24,10 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
         logging.Logger: The expected logger.
     """
     
-    global loggers
+    global logger
     logger = logging.getLogger(name)
-    if loggers.get(name):
-        return loggers.get(name)
+    if logger.get(name):
+        return logger.get(name)
     else:
 
         stream_handler = logging.StreamHandler()
