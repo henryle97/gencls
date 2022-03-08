@@ -1,6 +1,9 @@
 # logger
 import logging
 
+
+loggers = {}
+
 def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
     """Initialize and get a logger by name.
 
@@ -26,10 +29,9 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
     
     global logger
     logger = logging.getLogger(name)
-    if logger.get(name):
-        return logger.get(name)
+    if loggers.get(name):
+        return loggers.get(name)
     else:
-
         stream_handler = logging.StreamHandler()
         handlers = [stream_handler]
 
@@ -46,7 +48,7 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
 
 
         logger.setLevel(log_level)
-
+        loggers[name] = logger
     return logger
 
 
