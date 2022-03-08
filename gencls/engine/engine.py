@@ -41,6 +41,8 @@ class Engine:
         self.logger = get_root_logger(log_file=log_file, log_level='INFO')
         self._init_info_dict()
         
+        self.logger.info(config)
+
         # build dataloader
         if mode == 'train':
             self.train_dataloader = build_dataloader(config, mode='train')
@@ -86,7 +88,7 @@ class Engine:
         self.model = self.model.to(self.device)
         
         # save config
-        self.logger.info(config.pretty_text())
+        
         config.save(osp.join(self.exp_dir, "config.yml"))
         
 
