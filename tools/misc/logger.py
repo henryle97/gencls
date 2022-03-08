@@ -25,7 +25,7 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
     """
     
    
-    logger = logging.getLogger(name)
+    logger = logging.getLogger()
 
     stream_handler = logging.StreamHandler()
     handlers = [stream_handler]
