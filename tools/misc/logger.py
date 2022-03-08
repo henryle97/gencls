@@ -1,11 +1,6 @@
 # logger
 import logging
 
-import torch.distributed as dist
-
-logger_initialized = {}
-
-
 def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
     """Initialize and get a logger by name.
 
@@ -28,30 +23,14 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
     Returns:
         logging.Logger: The expected logger.
     """
-    global logger
+    
+   
     logger = logging.getLogger(name)
-    if name in logger_initialized:
-        return logger
-    # handle hierarchical names
-    # e.g., logger "a" is initialized, then logger "a.b" will skip the
-    # initialization since it is a child of "a".
-    for logger_name in logger_initialized:
-        if name.startswith(logger_name):
-            return logger
 
     stream_handler = logging.StreamHandler()
     handlers = [stream_handler]
 
-    if dist.is_available() and dist.is_initialized():
-        rank = dist.get_rank()
-    else:
-        rank = 0
-
-    # only rank 0 will add a FileHandler
-    if rank == 0 and log_file is not None:
-        # Here, the default behaviour of the official logger is 'a'. Thus, we
-        # provide an interface to change the file mode to the default
-        # behaviour.
+    if log_file is not None:
         file_handler = logging.FileHandler(log_file, file_mode)
         handlers.append(file_handler)
 
@@ -62,12 +41,8 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
         handler.setLevel(log_level)
         logger.addHandler(handler)
 
-    if rank == 0:
-        logger.setLevel(log_level)
-    else:
-        logger.setLevel(logging.ERROR)
 
-    logger_initialized[name] = True
+    logger.setLevel(log_level)
 
     return logger
 

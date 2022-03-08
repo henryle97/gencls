@@ -37,7 +37,7 @@ class Engine:
 
         # logger
         timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-        log_file = log_file = osp.join(self.exp_dir, f'{timestamp}.log')
+        log_file = osp.join(self.exp_dir, f'{timestamp}.log')
         self.logger = get_root_logger(log_file=log_file, log_level='INFO')
         self._init_info_dict()
         
