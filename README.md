@@ -17,6 +17,22 @@ GenCLS is an open source image classification toolbox based on PyTorch.
 ## Data 
 
 
+## Get start 
+- Training from scratch:
+```bash
+python tools/train.py --config <config_file> --exp_dir <exp_dir>
+python tools/train.py --config config/print_hw_cls.yml --exp_dir experiments/exp_1
+```
+- Train from pretrained model:
+```bash 
+python tools/train.py --config <config_file> --exp_dir <exp_dir> --pretrained <pretrained_model>
+```
+
+- Resume training from checkpoint:
+```bash
+python tools/train.py --config <config_file> --exp_dir <exp_dir> --resume_from <checkpoint>
+```
+
 ## Model Zoo 
 - [x] MobileNetV3 
 - [ ] ResNet

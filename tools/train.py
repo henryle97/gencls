@@ -12,6 +12,8 @@ if __name__ == "__main__":
                         required=False, help="config path")
     parser.add_argument('--pretrained', type=str,
                         required=False, help="config path")
+    parser.add_argument('--exp_dir', type=str, help='experiment directory')
+    
     args = parser.parse_args()
     config = Cfg.load_config_from_file(args.config)
     config = Cfg.update_from_args(config, args)

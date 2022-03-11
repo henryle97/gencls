@@ -1,7 +1,6 @@
 import argparse
 from gencls.engine.engine import Engine
 from tools.misc.config import Cfg
-from tools.misc.logger import get_root_logger
 
 
 if __name__ == "__main__":
@@ -16,8 +15,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     config = Cfg.load_config_from_file(args.config)
     config = Cfg.update_from_args(config, args)
-    logger = get_root_logger()
-    logger.info(config.pretty_text())
     engine = Engine(config, mode='eval')
     result = engine.test()
     print(result)
