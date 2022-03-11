@@ -10,10 +10,11 @@ from gencls.engine.train import train_one_epoch
 from gencls.evaluation import build_metric
 from gencls.models.builder import build_loss, build_model, build_optimizer, build_scheduler
 from gencls.dataset.postprocess import build_postprocess
-from tools.misc.logger import get_root_logger
+from tools.misc.logger import get_logger
 from tools.misc.save_load_model import save_checkpoint, load_checkpoint, save_weight, load_weight, move_optimize_to_device
 from tools.misc.average_meter import AverageMeter
-from tools.misc.config import Cfg
+
+
 class Engine:
     def __init__(self, config, mode='train'):
         """ Engine class
@@ -38,7 +39,7 @@ class Engine:
         # logger
         timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
         log_file = osp.join(self.exp_dir, f'{timestamp}.log')
-        self.logger = get_root_logger(log_file=log_file, log_level='INFO')
+        self.logger = get_logger(log_file=log_file, log_level='INFO')
         self._init_info_dict()
         
         self.logger.info(config)

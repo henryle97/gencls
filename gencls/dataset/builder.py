@@ -43,6 +43,7 @@ def build_dataset(config, mode='train'):
                 label_path = config['Dataset']['train_label_path']
             else:
                 label_path = config['Dataset']['val_label_path']
+                
             assert label_path is not None, 'must set label path'
             mode_key = mode.title()
             dataset = LmdbDataset(

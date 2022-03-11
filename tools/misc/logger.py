@@ -1,16 +1,17 @@
-# logger
+import os
+import sys
 import logging
+import functools
 
+logger_initialized = {}
 
-def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
+@functools.lru_cache()
+def get_logger(name='root', log_file=None, log_level=logging.DEBUG):
     """Initialize and get a logger by name.
-
     If the logger has not been initialized, this method will initialize the
     logger by adding one or two handlers, otherwise the initialized logger will
     be directly returned. During initialization, a StreamHandler will always be
-    added. If `log_file` is specified and the process rank is 0, a FileHandler
-    will also be added.
-
+    added. If `log_file` is specified a FileHandler will also be added.
     Args:
         name (str): Logger name.
         log_file (str | None): The log filename. If specified, a FileHandler
@@ -18,79 +19,30 @@ def get_logger(name, log_file=None, log_level=logging.INFO, file_mode='w'):
         log_level (int): The logger level. Note that only the process of
             rank 0 is affected, and other processes will set the level to
             "Error" thus be silent most of the time.
-        file_mode (str): The file mode used in opening log file.
-            Defaults to 'w'.
-
     Returns:
         logging.Logger: The expected logger.
     """
-    
-    global logger
     logger = logging.getLogger(name)
-    logger.propagate = False
-    stream_handler = logging.StreamHandler()
-    handlers = [stream_handler]
-
-    if log_file is not None:
-        file_handler = logging.FileHandler(log_file, file_mode)
-        handlers.append(file_handler)
+    if name in logger_initialized:
+        return logger
+    for logger_name in logger_initialized:
+        if name.startswith(logger_name):
+            return logger
 
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    for handler in handlers:
-        handler.setFormatter(formatter)
-        handler.setLevel(log_level)
-        logger.addHandler(handler)
+        '[%(asctime)s] %(name)s %(levelname)s: %(message)s',
+        datefmt="%Y/%m/%d %H:%M:%S")
 
-
-    logger.setLevel(log_level)
+    stream_handler = logging.StreamHandler(stream=sys.stdout)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+    if log_file is not None:
+        log_file_folder = os.path.split(log_file)[0]
+        os.makedirs(log_file_folder, exist_ok=True)
+        file_handler = logging.FileHandler(log_file, 'a')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
     
+    logger.setLevel(log_level)
+    logger_initialized[name] = True
     return logger
-
-
-def print_log(msg, logger=None, level=logging.INFO):
-    """Print a log message.
-
-    Args:
-        msg (str): The message to be logged.
-        logger (logging.Logger | str | None): The logger to be used.
-            Some special loggers are:
-            - "silent": no message will be printed.
-            - other str: the logger obtained with `get_root_logger(logger)`.
-            - None: The `print()` method will be used to print log messages.
-        level (int): Logging level. Only available when `logger` is a Logger
-            object or "root".
-    """
-    if logger is None:
-        print(msg)
-    elif isinstance(logger, logging.Logger):
-        logger.log(level, msg)
-    elif logger == 'silent':
-        pass
-    elif isinstance(logger, str):
-        _logger = get_logger(logger)
-        _logger.log(level, msg)
-    else:
-        raise TypeError(
-            'logger should be either a logging.Logger object, str, '
-            f'"silent" or None, but got {type(logger)}')
-
-def get_root_logger(log_file=None, log_level=logging.INFO):
-    """Use `get_logger` method in mmcv to get the root logger.
-
-    The logger will be initialized if it has not been initialized. By default a
-    StreamHandler will be added. If `log_file` is specified, a FileHandler will
-    also be added. The name of the root logger is the top-level package name,
-    e.g., "mmpose".
-
-    Args:
-        log_file (str | None): The log filename. If specified, a FileHandler
-            will be added to the root logger.
-        log_level (int): The root logger level. Note that only the process of
-            rank 0 is affected, while other processes will set the level to
-            "Error" and be silent most of the time.
-
-    Returns:
-        logging.Logger: The root logger.
-    """
-    return get_logger(__name__.split('.')[0], log_file, log_level)

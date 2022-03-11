@@ -1,7 +1,6 @@
 import argparse
 from gencls.engine.engine import Engine
 from tools.misc.config import Cfg
-from tools.misc.logger import get_root_logger
 
 
 if __name__ == "__main__":
