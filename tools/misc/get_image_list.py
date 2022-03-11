@@ -1,5 +1,4 @@
 import glob 
-import os.path as osp
 import os 
 
 EXT_IMGS = ['.jpg', '.png', '.jpeg', '.tif']

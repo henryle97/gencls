@@ -7,9 +7,7 @@ import torch
 import tqdm 
 from torch.utils.data import Dataset 
 from gencls.dataset.preprocess.create_operators import create_operators
-from gencls.dataset.preprocess.transform import transform
 import random 
-from tools.misc.logger import get_root_logger
 
 class BaseDataset(Dataset):
     def __init__(self, 

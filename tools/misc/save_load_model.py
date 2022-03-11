@@ -1,8 +1,6 @@
 import torch 
-from tools.misc.logger import get_root_logger
-
-
-logger = get_root_logger()
+from tools.misc.logger import get_logger
+logger = get_logger()
 
 def save_checkpoint(checkpoint_path, 
                     model, 
