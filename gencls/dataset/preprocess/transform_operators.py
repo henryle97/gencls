@@ -43,6 +43,7 @@ class Resize:
                 img = cv2.resize(img, (w_keep_ratio, target_h), cv2.INTER_AREA)
                 padding = target_w - w_keep_ratio
                 img = cv2.copyMakeBorder(img, 0, 0, 0, padding, borderType=cv2.BORDER_CONSTANT, value=255)
+                # print(img.shape)
         return img 
 
 

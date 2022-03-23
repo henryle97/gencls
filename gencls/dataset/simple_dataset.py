@@ -52,17 +52,22 @@ class SimpleDataset(BaseDataset):
 
     def _get_data(self, idx):
         # print("IDX ", idx)
-        if self.image_root:
-            img_path = osp.join(self.image_root, self.image_paths[idx])
-        else:
-            img_path = self.image_paths[idx]
-
-        img = cv2.imread(img_path)
-        # if img is None: 
-        #     print("Get image None")
-        #     raise Exception
-        if self.transform_ops:
-            img = transform(img, self.transform_ops)
+        try:
+            if self.image_root and 'ehr_ai_pipeline' not in self.image_paths[idx]:
+                img_path = osp.join(self.image_root, self.image_paths[idx])
+            else:
+                img_path = self.image_paths[idx]
+            
+            img = cv2.imread(img_path)
+            # if img is None: 
+            #     print("Get image None")
+            #     raise Exception
+            if self.transform_ops:
+                
+                img = transform(img, self.transform_ops)
+        except:
+            print(img_path)
+            self._get_data(random.randint(0, self.nSamples-1))
 
         label = self.labels[idx]
         return img, label, img_path

@@ -31,7 +31,7 @@ class Cfg(dict):
         if args_dict.get('pretrained') is not None:
             config['Common']['pretrained_model'] = args.pretrained
         if args_dict.get('metric') is not None:
-            config['Metric'] = args.metric.split(",")
+            config['Metric'] = args.metric
         
         if args_dict.get("exp_dir") is not None:
             config['Common']['exp_dir'] = args.exp_dir

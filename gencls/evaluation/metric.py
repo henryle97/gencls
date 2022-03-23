@@ -118,6 +118,7 @@ def precision_recall_f1(pred, target, average_mode='macro', thrs=0.):
     # pred_score = pred_score.flatten()
     pred = torch.argmax(pred, dim=1).flatten().numpy()
     target = target.flatten().numpy()
+    print(classification_report(target, pred))
     return precision_recall_fscore_support(target, pred)
 
     # gt_positive = one_hot(target.flatten(), num_classes)
