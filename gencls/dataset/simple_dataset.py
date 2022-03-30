@@ -80,8 +80,8 @@ class SimpleDataset(BaseDataset):
             if self.transform_ops:
                 
                 img = transform(img, self.transform_ops)
-        except:
-            print(img_path)
+        except Exception as err:
+            print(err, self.image_paths[idx])
             self._get_data(random.randint(0, self.nSamples-1))
 
         label = self.labels[idx]
