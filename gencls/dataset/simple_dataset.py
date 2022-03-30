@@ -34,7 +34,7 @@ class SimpleDataset(BaseDataset):
         if self.cached:
             for img_path in tqdm.tqdm(self.image_paths):
                 try:
-                    if self.image_root and 'ehr_ai_pipeline' not in self.image_paths[idx]:
+                    if self.image_root:
                         img_path = osp.join(self.image_root, img_path)
                     
                     img = cv2.imread(img_path)
