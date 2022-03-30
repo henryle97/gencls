@@ -17,6 +17,7 @@ class SimpleDataset(BaseDataset):
                  label_path=None,
                  image_paths=None,
                  transform_ops=None,
+                 cached=False
                  ):
         super(SimpleDataset, self).__init__()
         self.image_root = image_root
@@ -28,6 +29,17 @@ class SimpleDataset(BaseDataset):
         self.labels = []
         self._load_annos()
         self.nSamples = len(self.image_paths)
+        self.cached = cached 
+        self.imgs = []
+        if self.cached:
+            for img_path in tqdm.tqdm(self.image_paths):
+                try:
+                    img = cv2.imread(img_path)
+                    self.imgs.append(img)
+                except:
+                    print("Not found: ", img_path)
+                    continue
+
 
     def _load_annos(self):
         '''
@@ -53,12 +65,15 @@ class SimpleDataset(BaseDataset):
     def _get_data(self, idx):
         # print("IDX ", idx)
         try:
-            if self.image_root and 'ehr_ai_pipeline' not in self.image_paths[idx]:
-                img_path = osp.join(self.image_root, self.image_paths[idx])
+            if self.cached:
+                img = self.imgs[idx]
             else:
-                img_path = self.image_paths[idx]
-            
-            img = cv2.imread(img_path)
+                if self.image_root and 'ehr_ai_pipeline' not in self.image_paths[idx]:
+                    img_path = osp.join(self.image_root, self.image_paths[idx])
+                else:
+                    img_path = self.image_paths[idx]
+                
+                img = cv2.imread(img_path)
             # if img is None: 
             #     print("Get image None")
             #     raise Exception

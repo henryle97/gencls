@@ -13,7 +13,7 @@ from gencls.dataset.postprocess import build_postprocess
 from tools.misc.logger import get_logger
 from tools.misc.save_load_model import save_checkpoint, load_checkpoint, save_weight, load_weight, move_optimize_to_device
 from tools.misc.average_meter import AverageMeter
-
+from torch.cuda import amp 
 
 class Engine:
     def __init__(self, config, mode='train'):
@@ -88,6 +88,15 @@ class Engine:
         
         self.model = self.model.to(self.device)
         
+        # amp 
+        self.grad_scaler = None
+        if self.config['Common']['amp']:
+            cuda = self.device != 'cpu'
+            self.logger.info("Training with AMP mode")
+            self.grad_scaler = amp.GradScaler(enabled=cuda)
+
+
+
         # save config
         
         config.save(osp.join(self.exp_dir, "config.yml"))

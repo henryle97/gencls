@@ -20,7 +20,8 @@ def build_dataset(config, mode='train'):
             dataset = SimpleDataset(
                 image_root=config['Dataset']['image_root'],
                 label_path=label_path,
-                transform_ops=config['Dataset'][mode_key]['transforms']
+                transform_ops=config['Dataset'][mode_key]['transforms'],
+                cached=config['Dataset']['cached']
             )
         else:
             if mode == 'infer':
@@ -34,7 +35,7 @@ def build_dataset(config, mode='train'):
             dataset = SimpleDataset(
                 image_root=None,
                 image_paths=image_paths,
-                transform_ops=config['Infer']['transforms']
+                transform_ops=config['Infer']['transforms'],
             )
     elif config['Dataset']['type'] == 'LmdbDataset':
         if mode in ['train', 'eval']:

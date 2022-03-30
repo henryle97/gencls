@@ -1,7 +1,7 @@
 from multiprocessing import get_logger
 import time
 
-import torch 
+from torch.cuda import amp 
 
 
 def train_one_epoch(engine, epoch_id, print_batch_step):
@@ -13,18 +13,30 @@ def train_one_epoch(engine, epoch_id, print_batch_step):
         targets = batch_data['label'].long()
 
         tic = time.time()
-        outputs = engine.model(batch_data['img'])
-        forward_time = time.time() - tic
+        if engine.grad_scaler is None: 
+            outputs = engine.model(batch_data['img'])
+            forward_time = time.time() - tic
 
-        tic = time.time()
-        loss = engine.criterion(outputs, targets)
-        engine.optimizer.zero_grad()
-        loss.backward()
-        engine.optimizer.step()
+            tic = time.time()
+            loss = engine.criterion(outputs, targets)
+            engine.optimizer.zero_grad()
+            loss.backward()
+            engine.optimizer.step()
+            
+        else:
+            with amp.autocast():
+                outputs = engine.model(batch_data['img'])
+                forward_time = time.time() - tic
+
+                tic = time.time()
+                loss = engine.criterion(outputs, targets)
+            engine.grad_scaler.scale(loss).backward()
+            engine.grad_scaler.step(engine.optimizer)
+            engine.grad_scaler.update()
+
         if engine.scheduler is not None:
             engine.scheduler.step()
         backward_time = time.time() - tic
-
         engine.time_info['data_time'].update(data_time)
         engine.time_info['forward_time'].update(forward_time)
         engine.time_info['backward_time'].update(backward_time)

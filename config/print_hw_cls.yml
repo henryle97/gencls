@@ -3,7 +3,7 @@ Common:
   use_gpu: true
   pretrained_model:                 # for train and infer
   resume_from:                      # only for train
-  exp_dir: 'experiments/test'
+  exp_dir: 'experiments/text_cls_exp_1'
   eval_during_training: true
   eval_per_epoch: 5
   epochs: 100
@@ -42,15 +42,15 @@ Dataset:
   # train_path:
   # test_path:
   type: SimpleDataset
-  image_root: './DATA/hw_print_data_v1'
-  train_label_path: './DATA/hw_print_data_v1/train_print_hw_cls.txt'
-  val_label_path: './DATA/hw_print_data_v1/test_print_hw_cls.txt'
-
+  image_root: '/vinbrain/hoanglv12/OCR_DATASET/print_hw_dataset'
+  train_label_path: '/vinbrain/hoanglv12/OCR_DATASET/print_hw_dataset/text_cls_v1_train.txt'
+  val_label_path: '/vinbrain/hoanglv12/OCR_DATASET/print_hw_dataset/text_cls_v1_test.txt'
+  cached: true
   # image_root: 
   # val_label_path: './DATA/vb500_cls_test.txt'
   
   Train:
-    batch_size: 64
+    batch_size: 128
     transforms:
       - DecodeImage:
           to_rgb: true
@@ -108,7 +108,4 @@ Infer:
     class_id_mapping:
       print: 0
       handwriting: 1
-
-
-
 
