@@ -4,6 +4,7 @@ import lmdb # install lmdb by "pip install lmdb"
 import cv2
 import numpy as np
 from tqdm import tqdm
+import argparse
 
 def checkImageIsValid(imageBin):
     isvalid = True
@@ -114,3 +115,15 @@ def createDataset(outputPath, root_dir, annotation_path, separate):
     # print("Vocab from dataset: ", sorted(vocab))
     sys.stdout.flush()
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Create lmdb')
+    parser.add('--root_dir', type=str, defaul='./')
+    parser.add('--anno', type=str)
+    parser.add('--out', type=str)
+    parser.add('--sep', type=str, default='\t')
+    args = parser.parse_args()
+    createDataset(
+        outputPath=args.out, 
+        root_dir=args.root, 
+        annotation_path=args.anno, 
+        separate=args.sep)
