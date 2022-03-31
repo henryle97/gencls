@@ -117,10 +117,10 @@ def createDataset(outputPath, root_dir, annotation_path, separate):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Create lmdb')
-    parser.add('--root_dir', type=str, defaul='./')
-    parser.add('--anno', type=str)
-    parser.add('--out', type=str)
-    parser.add('--sep', type=str, default='\t')
+    parser.add_argument('--root_dir', type=str, defaul='./')
+    parser.add_argument('--anno', type=str)
+    parser.add_argument('--out', type=str)
+    parser.add_argument('--sep', type=str, default='\t')
     args = parser.parse_args()
     createDataset(
         outputPath=args.out, 
