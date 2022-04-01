@@ -6,6 +6,11 @@ from torch.cuda import amp
 
 def train_one_epoch(engine, epoch_id, print_batch_step):
     tic = time.time()
+    # Reset info 
+    for key in engine.time_info.keys():
+        engine.time_info[key].reset()
+    engine.loss_info.reset()
+
     for iter_id, batch_data in enumerate(engine.train_dataloader):
         # print('{}MB allocated'.format(torch.cuda.memory_allocated()/1024**2))
         batch_data = engine.transfer_batch_to_device(batch_data)
@@ -26,13 +31,15 @@ def train_one_epoch(engine, epoch_id, print_batch_step):
         else:
             with amp.autocast():
                 outputs = engine.model(batch_data['img'])
-                forward_time = time.time() - tic
-
-                tic = time.time()
                 loss = engine.criterion(outputs, targets)
+            
+            engine.optimizer.zero_grad()
             engine.grad_scaler.scale(loss).backward()
             engine.grad_scaler.step(engine.optimizer)
             engine.grad_scaler.update()
+            
+            forward_time = time.time() - tic
+            tic = time.time()
 
         if engine.scheduler is not None:
             engine.scheduler.step()
@@ -47,12 +54,16 @@ def train_one_epoch(engine, epoch_id, print_batch_step):
                 "{}: {:.4f}".format(key, engine.time_info[key].avg)
                 for key in engine.time_info.keys()
             ])
-
+            lr_msg = f"lr: {round(engine.scheduler.get_last_lr()[0], 6)}"
             loss_msg = f"loss: {engine.loss_info.avg}"
-            engine.logger.info(f"[Train][Epoch {epoch_id}/{engine.config['Common']['epochs']}][Iter: {iter_id}/{len(engine.train_dataloader)}]: {time_msg}, {loss_msg}")
+
+            engine.logger.info(f"[Train][Epoch {epoch_id}/{engine.config['Common']['epochs']}][Iter: {iter_id}/{len(engine.train_dataloader)}]: {lr_msg}, {time_msg}, {loss_msg}")
 
             for key in engine.time_info.keys():
                 engine.time_info[key].reset()
+
+        if iter_id == len(engine.train_dataloader) - 1:
+            engine.writer.add_scalar('train_loss', engine.loss_info.avg, epoch_id)
 
 
 

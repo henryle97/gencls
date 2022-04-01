@@ -6,6 +6,7 @@ import tqdm
 
 def evaluate(engine, epoch_id):
     tic = time.time()
+    
     with torch.no_grad():
         for idx, batch_data in enumerate(engine.val_dataloader):
             
@@ -19,14 +20,17 @@ def evaluate(engine, epoch_id):
             engine.loss_info.update(loss.item(), outputs.size(0))
     eval_time = time.time() - tic
     eval_msg = "Time_eval: {:.2f} - Loss_eval: {:.4f} - Acc_eval: {:.2f}".format(eval_time, engine.loss_info.avg, engine.metric_info.avg)
-
+    res_metric_eval = engine.metric_info.avg
 
     engine.logger.info(f"[Eval][Epoch {epoch_id}/{engine.config['Common']['epochs']}]: {eval_msg}")
-
+    engine.writer.add_scalar('val_loss', engine.loss_info.avg, epoch_id)
+    engine.writer.add_scalar('acc_eval', res_metric_eval, epoch_id)
+    engine.loss_info.reset()
+    engine.metric_info.reset()
     # for key in engine.time_info.keys():
     #     engine.time_info[key].reset()
 
-    return engine.metric_info.avg
+    return res_metric_eval
 
 def test(engine):
     tic = time.time()

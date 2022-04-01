@@ -13,7 +13,11 @@ from gencls.dataset.postprocess import build_postprocess
 from tools.misc.logger import get_logger
 from tools.misc.save_load_model import save_checkpoint, load_checkpoint, save_weight, load_weight, move_optimize_to_device
 from tools.misc.average_meter import AverageMeter
-from torch.cuda import amp 
+from torch.cuda import amp
+from torch.utils.tensorboard import SummaryWriter
+
+
+torch.backends.cudnn.benchmark = True
 
 class Engine:
     def __init__(self, config, mode='train'):
@@ -41,6 +45,8 @@ class Engine:
         log_file = osp.join(self.exp_dir, f'{timestamp}.log')
         self.logger = get_logger(log_file=log_file, log_level='INFO')
         self._init_info_dict()
+        # tensorboard
+        self.writer = SummaryWriter(log_dir=self.exp_dir)
         
         self.logger.info(config)
 
@@ -95,10 +101,7 @@ class Engine:
             self.logger.info("Training with AMP mode")
             self.grad_scaler = amp.GradScaler(enabled=cuda)
 
-
-
         # save config
-        
         config.save(osp.join(self.exp_dir, "config.yml"))
         
 
@@ -168,7 +171,7 @@ class Engine:
         for key in batch.keys():
             if key == 'img_path':
                 continue
-            batch[key] = batch[key].to(self.device)
+            batch[key] = batch[key].to(self.device, non_blocking=True)
         return batch
 
     def _init_info_dict(self):
